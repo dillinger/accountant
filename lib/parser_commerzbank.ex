@@ -59,40 +59,32 @@ defmodule ParserCommerzbank do
     Enum.reduce(input, [], fn {head, description}, acc ->
       cond do
         [short_title, transaction_date, amount] = String.split(head, "=") ->
-          info = Enum.join(description, " ") |> check_for_valid_string
-          file_date = make_file_date(transaction_date, file_for_year)
+          transaction_description = Enum.join(description, " ") |> check_for_valid_string
 
-          operation = %{
-            amount: String.replace(amount, "-", ""),
-            info: info,
-            title: short_title,
-            payment_date: "",
-            transaction_date: ParserDates.find_datetime(info, file_date),
-            operation_type: operation_type(amount)
-          }
+          transaction_date_from_file_name =
+            ParserDates.build_date_time(transaction_date, file_for_year)
+
+          operation =
+            %{}
+            |> Map.put(:info, transaction_description)
+            |> Map.put(:amount, String.replace(amount, "-", ""))
+            |> Map.put(:title, short_title)
+            |> Map.put(:payment_date, "")
+            |> Map.put(
+              :transaction_date,
+              ParserDates.transaction_date_time(
+                transaction_description,
+                transaction_date_from_file_name
+              )
+            )
+            |> Map.put(:operation_type, operation_type(amount))
 
           [operation | acc]
+
+        true ->
+          acc
       end
     end)
-  end
-
-  def build_safe_date(year, month) do
-    Date.from_iso8601!("#{year}-#{month}-01")
-    |> Date.days_in_month()
-  end
-
-  def make_file_date(short_date, year) do
-    [day, month] = String.split(short_date, ".")
-    safe_days_in_month = build_safe_date(year, month)
-
-    case Date.from_iso8601("#{year}-#{month}-#{day}") do
-      {:ok, date} ->
-        DateTime.new!(date, ~T[00:00:00])
-
-      {:error, _} ->
-        Date.from_iso8601!("#{year}-#{month}-#{safe_days_in_month}")
-        |> DateTime.new!(~T[00:00:00])
-    end
   end
 
   def operation_type(amount) do
@@ -105,7 +97,7 @@ defmodule ParserCommerzbank do
   defp check_for_valid_string(string) do
     case String.valid?(string) do
       true -> string
-      false -> ""
+      false -> "not valid string"
     end
   end
 end

@@ -6,12 +6,12 @@ defmodule Accountant do
     |> Enum.map(fn filename ->
       File.read(filename)
       |> ParserDates.year_from_file_name(filename)
-      |> try_to_parse()
+      |> try_to_parse_with_file_date()
     end)
     |> List.flatten()
   end
 
-  def try_to_parse([{:ok, content}, file_date]) do
+  def try_to_parse_with_file_date([{:ok, content}, file_date]) do
     ParserCommerzbank.parse(content, file_date)
   end
 
@@ -22,9 +22,7 @@ defmodule Accountant do
   def add_to_database(path \\ @defaultPath) do
     read_and_parse(path)
     |> Enum.each(fn entry ->
-      trans = %Accountant.Transaction{}
-
-      change = Accountant.Transaction.changeset(trans, entry)
+      change = Accountant.Transaction.changeset(%Accountant.Transaction{}, entry)
       Accountant.Repo.insert(change)
     end)
   end
