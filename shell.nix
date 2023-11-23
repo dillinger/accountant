@@ -1,15 +1,11 @@
 let
-nixpkgs = import (builtins.fetchTarball https://github.com/nixos/nixpkgs/archive/nixpkgs-unstable.tar.gz) {
-  overlays = [];
-  config = {};
-};
-
+  nixpkgs = import (builtins.fetchTarball https://github.com/nixos/nixpkgs/archive/nixpkgs-unstable.tar.gz) { };
 in
 with nixpkgs;
 
 stdenv.mkDerivation {
   name = "postgres-env";
-  buildInputs = [];
+  buildInputs = [ ];
 
   nativeBuildInputs = [
     zsh
@@ -18,7 +14,6 @@ stdenv.mkDerivation {
     gdal
     nixpkgs-fmt
 
-    # postgres-12 with postgis support
     (postgresql_15.withPackages (p: [ p.postgis ]))
   ];
 
@@ -59,4 +54,3 @@ stdenv.mkDerivation {
     alias pg="psql -p 5555 -U postgres"
   '';
 }
-

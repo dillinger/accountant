@@ -1,11 +1,13 @@
-defmodule Accountant.FilesInDirectory do
+defmodule FilesInDirectory do
+  @ignore_files [".DS_Store"]
+
   def list_files(filepath) do
     files_in_directory(filepath)
   end
 
   def files_in_directory(filepath) do
     cond do
-      String.contains?(filepath, ".DS_Store") -> []
+      String.contains?(filepath, @ignore_files) -> []
       true -> expand(File.ls(filepath), filepath)
     end
   end
