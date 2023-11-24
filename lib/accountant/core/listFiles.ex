@@ -1,4 +1,4 @@
-defmodule FilesInDirectory do
+defmodule Accountant.Core.ListFiles do
   @ignore_files [".DS_Store"]
 
   def list_files(filepath) do

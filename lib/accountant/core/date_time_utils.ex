@@ -1,4 +1,4 @@
-defmodule ParserDates do
+defmodule Accountant.Core.DateTimeUtils do
   @doc """
   Handle three different date forms.
 

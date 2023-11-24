@@ -3,26 +3,24 @@ defmodule Accountant.Transaction do
   import Ecto.Changeset
 
   schema "transactions" do
-    field(:amount, :string)
-    field(:info, :string)
     field(:title, :string)
-    field(:payment_date, :string)
-    field(:transaction_date, :utc_datetime)
-    field(:operation_type, :string)
+    field(:type, :string)
+    field(:amount, Money.Ecto.Amount.Type)
+    field(:description, :string)
+    field(:date, :utc_datetime)
 
     timestamps(type: :utc_datetime)
   end
 
   def changeset(account, params \\ %{}) do
     account
-    |> cast(params, [:amount, :info, :title, :payment_date, :transaction_date, :operation_type])
+    |> cast(params, [:title, :type, :amount, :description, :date])
     |> validate_required([
-      :amount,
-      :info,
-      :operation_type,
-      # :payment_date,
       :title,
-      :transaction_date
+      :type,
+      :amount,
+      :description,
+      :date
     ])
   end
 end

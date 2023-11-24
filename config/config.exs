@@ -12,13 +12,14 @@ config :accountant, ecto_repos: [Accountant.Repo]
 
 config :money,
   default_currency: :EUR,
-  separator: ".",
-  delimiter: ",",
-  symbol: false,
-  symbol_on_right: false,
-  symbol_space: false,
-  fractional_unit: true,
-  strip_insignificant_zeros: false,
-  code: false,
-  minus_sign_first: true,
-  strip_insignificant_fractional_unit: false
+  delimiter: ","
+
+# separator: ".",
+# symbol: false,
+# symbol_on_right: false,
+# symbol_space: false,
+# fractional_unit: true,
+# strip_insignificant_zeros: false,
+# code: false,
+# minus_sign_first: true,
+# strip_insignificant_fractional_unit: false

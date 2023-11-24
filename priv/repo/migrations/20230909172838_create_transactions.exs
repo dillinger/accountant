@@ -4,11 +4,10 @@ defmodule Accountant.Repo.Migrations.CreateTransactions do
   def change do
     create table(:transactions) do
       add(:title, :string)
-      add(:info, :text)
-      add(:operation_type, :string)
-      add(:amount, :string)
-      add(:payment_date, :string)
-      add(:transaction_date, :utc_datetime)
+      add(:type, :string)
+      add(:amount, :integer)
+      add(:description, :text)
+      add(:date, :utc_datetime)
 
       timestamps()
     end

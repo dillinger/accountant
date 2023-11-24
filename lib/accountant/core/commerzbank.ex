@@ -1,4 +1,10 @@
-defmodule ParserCommerzbank do
+defmodule Accountant.Core.Commerzbank do
+  defstruct amount: 0,
+            description: "",
+            date: "",
+            title: "",
+            type: ""
+
   @doc """
   Parse strings of entries. Where each entry is separated by line with date and anount.
   The rest of the lines are the description of the transaction antil the next entry.
@@ -64,20 +70,24 @@ defmodule ParserCommerzbank do
           transaction_date_from_file_name =
             ParserDates.build_date_time(transaction_date, file_for_year)
 
+          date =
+            ParserDates.transaction_date_time(
+              transaction_description,
+              transaction_date_from_file_name
+            )
+
+          {:ok, amount_value} =
+            String.replace(amount, "-", "") |> Money.parse(:EUR)
+
           operation =
             %{}
-            |> Map.put(:info, transaction_description)
-            |> Map.put(:amount, String.replace(amount, "-", ""))
+            |> Map.put(:amount, amount_value)
+            |> Map.put(:description, transaction_description)
+            |> Map.put(:date, date)
             |> Map.put(:title, short_title)
-            |> Map.put(:payment_date, "")
-            |> Map.put(
-              :transaction_date,
-              ParserDates.transaction_date_time(
-                transaction_description,
-                transaction_date_from_file_name
-              )
-            )
-            |> Map.put(:operation_type, operation_type(amount))
+            |> Map.put(:type, operation_type(amount))
+
+          IO.inspect(operation)
 
           [operation | acc]
 
